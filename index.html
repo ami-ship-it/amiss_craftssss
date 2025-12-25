@@ -853,6 +853,260 @@
       transform: scale(1.1);
     }
   </style>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at 30% 30%, #d7ebff, #ffffff 70%);
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Dock */
+    .dock {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: flex-end;
+      padding: 16px 32px;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(26px);
+      -webkit-backdrop-filter: blur(26px);
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow:
+        0 5px 22px rgba(0, 0, 0, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+      z-index: 100;
+    }
+
+    .dock-item {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.35s cubic-bezier(0.25, 1.2, 0.4, 1);
+      cursor: pointer;
+      position: relative;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.14));
+    }
+
+    .dock-item:hover {
+      transform: scale(1.55) translateY(-26px);
+      z-index: 20;
+    }
+
+    .dock-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Смайлик-разделитель */
+    .smiley-spacer {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: #0216ff;
+      border: 2px solid #0066cc;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 5px rgba(0, 102, 204, 0.15);
+    }
+
+    .smiley-spacer:hover {
+      transform: scale(1.3) translateY(-4px);
+      background: #cce6ff;
+      z-index: 15;
+      box-shadow: 0 4px 8px rgba(0, 102, 204, 0.25);
+    }
+
+    /* Aqua Note Window */
+    .note-window {
+      position: absolute;
+      width: 320px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.12),
+        0 2px 6px rgba(0, 0, 0, 0.04);
+      z-index: 90;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.2, 0, 0.13, 1.5);
+      user-select: none;
+    }
+
+    .note-window.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .note-header {
+      height: 30px;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      cursor: move;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .dot.close { background: #ff5f57; }
+    .dot.min   { background: #ffbd2e; }
+    .dot.max   { background: #28c940; opacity: 0.4; pointer-events: none; }
+
+    .note-title {
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .note-content {
+      background: white;
+      padding: 22px;
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: #1d1d1f;
+    }
+
+    .note-content h3 {
+      margin: 0 0 12px 0;
+      font-weight: 600;
+      font-size: 16px;
+      color: #0066cc;
+    }
+
+    .note-content ul {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+
+    .note-content li {
+      margin-bottom: 6px;
+    }
+
+    /* Драг-смайлики */
+    .draggable-emoji {
+      position: absolute;
+      font-size: 42px;
+      cursor: grab;
+      user-select: none;
+      z-index: 50;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+    }
+
+    .draggable-emoji.dragging {
+      cursor: grabbing;
+      z-index: 60;
+      transform: scale(1.1);
+    }
+  </style>
+  <style>
+    * { margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #f0f6ff;
+      overflow: hidden;
+      height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    #instructions {
+      position: fixed;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: #0000ff;
+      font-size: 16px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .aqua-window {
+      position: absolute;
+      top: 100px;
+      left: 150px;
+      width: 320px;
+      height: 320px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 0, 255, 0.3);
+      border-radius: 12px;
+      box-shadow:
+        0 4px 12px rgba(0, 60, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      overflow: hidden;
+      cursor: default;
+      z-index: 20;
+    }
+    .title-bar {
+      height: 28px;
+      background: linear-gradient(to bottom, #e0e6f5, #cbd2ec);
+      border-bottom: 1px solid #a0b0d0;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      cursor: move;
+    }
+    .buttons {
+      display: flex;
+      gap: 8px;
+      margin-right: 12px;
+    }
+    .btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .close { background: #ff5f57; }
+    .minimize { background: #ffbd2e; }
+    .maximize { background: #28c940; }
+    .title {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: #333;
+      font-weight: 500;
+      pointer-events: none;
+    }
+    #lens-canvas {
+      display: block;
+      width: 100%;
+      height: calc(100% - 28px);
+    }
+  </style>
+  
 </head>
 <body>
 
@@ -869,77 +1123,7 @@
   </div>
 
   <!-- === macOS Notes — твоё CV === -->
-  <div class="note-card" style="top: 100px; left: 50px; width: 360px;">
-    <div class="note-header"><div class="window-controls"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div></div>
-    <div class="note-content">
-      <h2>O mně</h2>
-      <p>Jsem junior grafická designérka s praktickými zkušenostmi z reklamních agentur a kreativních studií. Specializuji se na grafický design, ilustrace a vizuální komunikaci. Mám silný cit pro detail, estetiku a schopnost vytvářet kreativní řešení, která fungují. Pracuji na vlastním autorském projektu – knize s AR (rozšířenou realitou), kterou si sama píšu a ilustruji. Hledám příležitost, kde mohu dále rozvíjet své dovednosti a přispívat k zajímavým projek</p>
-    </div>
-  </div>
-
-  <div class="note-card" style="top: 100px; left: 440px; width: 360px;">
-    <div class="note-header"><div class="window-controls"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div></div>
-    <div class="note-content">
-      <h2>Zkušenosti</h2>
-      <div style="border-left:2px solid rgba(0,85,255,0.15); padding-left:18px; margin-bottom:16px;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <div><strong style="color:#0055ff">Intern</strong> • Publicis Group</div>
-          <span style="background:rgba(0,85,255,0.05); padding:2px 8px; border-radius:8px; font-size:0.8rem; color:#0055ff">2024</span>
-        </div>
-        <ul style="padding-left:16px;"><li>Spolupráce na kreativních konceptech pro reklamní kampaně</li><li>Tvorba vizuálních návrhů a prezentací pro klienty</li><li>Vytváření více variant designérských řešení</li><li> Práce v Adobe Illustrator a Photoshop</li></ul>
-      </div>
-      <div style="border-left:2px solid rgba(0,85,255,0.15); padding-left:18px;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <div><strong style="color:#0055ff">Intern</strong> • Pingpongstudio</div>
-          <span style="background:rgba(0,85,255,0.05); padding:2px 8px; border-radius:8px; font-size:0.8rem; color:#0055ff">2024</span>
-        </div>
-        <ul style="padding-left:16px;"><li>Brand identity</li><li>Návrhy grafických materiálů pro různé projekty</li><li>Návrhy grafických materiálů pro různé projekty</li></ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="note-card" style="top: 440px; left: 50px; width: 360px;">
-    <div class="note-header"><div class="window-controls"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div></div>
-    <div class="note-content">
-      <h2>Vzdělání</h2>
-      <div style="border-left:2px solid rgba(0,85,255,0.15); padding-left:18px;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <div><strong style="color:#0055ff">Grafický design</strong> • VOŠ Michael</div>
-          <span style="background:rgba(0,85,255,0.05); padding:2px 8px; border-radius:8px; font-size:0.8rem; color:#0055ff">2023–2025</span>
-        </div>
-        <p>Typografie • Ilustrace • Vizuální komunikace</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="note-card" style="top: 760px; left: 50px; width: 360px;">
-    <div class="note-header"><div class="window-controls"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div></div>
-    <div class="note-content">
-      <h2>Jazyky</h2>
-      <div style="display:flex; gap:10px; margin-top:12px;">
-        <div style="text-align:center; flex:1; padding:12px; background:rgba(0,85,255,0.03); border-radius:8px;">
-          <div style="font-weight:600; color:#0055ff">Čeština</div>
-          <div>Plynule</div>
-        </div>
-        <div style="text-align:center; flex:1; padding:12px; background:rgba(0,85,255,0.03); border-radius:8px;">
-          <div style="font-weight:600; color:#0055ff">Angličtina</div>
-          <div>Plynule</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="note-card" style="top: 440px; left: 820px; width: 340px;">
-    <div class="note-header"><div class="window-controls"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div></div>
-    <div class="note-content">
-      <h2>Soft skills</h2>
-      <ul style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
-        <li> Týmová spolupráce </li> <li> Rychlé učení</li>
-        <li> Zodpovědnost </li> <li>  Flexibilita </li>
-        <li> Kreativní myšlení </li> <li>  Time management </li>
-      </ul>
-    </div>
-  </div>
+  
 
 <!-- Папка 1 -->
 <div class="folder" id="folder1" style="top: 100px; left: 1400px;">
@@ -1043,18 +1227,33 @@
 
   <!-- Кнопка Nahoru -->
   <button id="scroll-to-top">↑</button>
-  
-  <!-- Dock -->
-  <div class="dock">
-    <div class="dock-item">
-      <div class="smiley-spacer" data-emoji="💫">💫</div>
+
+
+  <!-- Шаблон заметки (клонируем по клику) -->
+  <template id="note-template">
+    <div class="note-window">
+      <div class="note-header">
+        <div class="window-controls">
+          <div class="dot close"></div>
+          <div class="dot min"></div>
+          <div class="dot max"></div>
+        </div>
+        <div class="note-title">Заметка</div>
+      </div>
+      <div class="note-content">
+        <h3>Заголовок</h3>
+        <p>Текст заметки. Можно редактировать в коде.</p>
+      </div>
     </div>
+  </template>
+ <!-- Dock: ... + ❤️ → "Обо мне" → 🐾 (в конце!) -->
+  <div class="dock">
     <div class="dock-item" data-app="photoshop">
       <img src="https://uploads.onecompiler.io/444n3vtba/446z7f8se/Datovy%CC%81%20zdroj%208@4x.png" alt="Photoshop">
     </div>
 
     <div class="dock-item">
-      <div class="smiley-spacer" data-emoji="😊">😊</div>
+      <div class="smiley-spacer" data-emoji="🎨">🎨</div>
     </div>
 
     <div class="dock-item" data-app="illustrator">
@@ -1082,15 +1281,24 @@
     </div>
 
     <div class="dock-item" data-app="figma">
-      <img src="https://uploads.onecompiler.io/444n3vtba/446z7f8se/Datovy%CC%81%20zdroj%2010@4x.png" alt="Figma">
+      <img src="https://uploads.onecompiler.io/42xqrz4sv/445wkxav9/Untitled_Artwork-5%204.png" alt="Figma">
     </div>
+
     <div class="dock-item">
-      <div class="smiley-spacer" data-emoji="🎀">🎀</div>
+      <div class="smiley-spacer" data-emoji="❤️">❤️</div>
+    </div>
+
+    <!-- ✅ ПОМЕНЯНО: теперь "Обо мне" идёт ПЕРЕД 🐾 -->
+    <div class="dock-item" data-app="about-me">
+      <img src="https://uploads.onecompiler.io/42xqrz4sv/445wkxav9/Untitled_Artwork-11%203.png" alt="me" title="Обо мне">
+    </div>
+
+    <div class="dock-item">
+      <div class="smiley-spacer" data-emoji="🐾">🐾</div>
     </div>
   </div>
-  
 
-  <!-- Шаблон заметки (клонируем по клику) -->
+  <!-- Шаблон заметки -->
   <template id="note-template">
     <div class="note-window">
       <div class="note-header">
@@ -1099,16 +1307,29 @@
           <div class="dot min"></div>
           <div class="dot max"></div>
         </div>
-        <div class="note-title">Заметка</div>
+        <div class="note-title">Заголовок</div>
       </div>
       <div class="note-content">
         <h3>Заголовок</h3>
-        <p>Текст заметки. Можно редактировать в коде.</p>
+        <p>Контент</p>
       </div>
     </div>
   </template>
-
-  <script>
+   <div id="instructions"></div>
+  <canvas id="bg"></canvas>
+  <div id="lens" class="aqua-window">
+    <div class="title-bar" id="dragHandle">
+      <div class="buttons">
+        <div class="btn close"></div>
+        <div class="btn minimize"></div>
+        <div class="btn maximize"></div>
+      </div>
+      <div class="title">🔍</div>
+    </div>
+    <canvas id="lens-canvas"></canvas>
+  </div>
+  
+<script>
     // === Данные: фото для папок + Portfolio! ===
     const photoSets = {
       vacation: [
@@ -1601,67 +1822,126 @@
     buildGallery(galleryGrid, portfolios[i].photos);
   }
 </script>
- <script>
-    // Данные для приложений
+<script>
     const appData = {
-      photoshop: {
-        title: "Adobe Photoshop",
-        header: "🎨 Photoshop",
-        text: "Umím retuš fotografií, práci s vrstvami a úpravu obrázků."
-      },
-      illustrator: {
-        title: "Adobe Illustrator",
-        header: "✏️ Illustrator",
-        text: "Umím vytvářet vektorovou grafiku, loga a ilustrace"
-      },
-      aftereffects: {
-        title: "Adobe After Effects",
-        header: "🎬 After Effects",
-        text: "Zvládám základní animace a motion graphics."
-      },
-      indesign: {
-        title: "Adobe InDesign",
-        header: "📄 InDesign",
-        text: "Ovládám tvorbu vícestránkových dokumentů a přípravu pro tisk."
-      },
-      figma: {
-        title: "Figma",
-        header: "🧩 Figma",
-        text: "Umím navrhovat UI/UX design, prototypy a pracovat s komponentami."
-      }
+      photoshop: { title: "Adobe Photoshop", header: "🎨 Photoshop", text: "Люблю работать с масками, коррекцией и композитингом. Часто использую для подготовки изображений к AR-проектам." },
+      illustrator: { title: "Adobe Illustrator", header: "✏️ Illustrator", text: "Основной инструмент для создания векторных иллюстраций, логотипов и элементов UI/UX." },
+      aftereffects: { title: "Adobe After Effects", header: "🎬 After Effects", text: "Анимирую иллюстрации, создаю motion-дизайн и интерактивные прототипы для AR." },
+      indesign: { title: "Adobe InDesign", header: "📄 InDesign", text: "Вёрстка печатных и цифровых изданий — включая мою AR-книгу с интерактивными элементами." },
+      figma: { title: "Figma", header: "🧩 Figma", text: "Прототипирование интерфейсов, совместная работа с командой и handoff разработчикам." }
     };
 
-    // Открыть заметку
+    const aboutMeNotes = [
+      {
+        header: "🙋‍♀️ O mně",
+        title: "Ahoj! Jsem Ami ",
+        content: `<p>Jsem junior grafická designérka s praktickými zkušenostmi z reklamních agentur a kreativních studií. Specializuji se na grafický design, ilustrace a vizuální komunikaci. Mám silný cit pro detail, estetiku a schopnost vytvářet kreativní řešení, která fungují. Pracuji na vlastním autorském projektu – knize s AR (rozšířenou realitou), kterou si sama píšu a ilustruji. Hledám příležitost, kde mohu dále rozvíjet své dovednosti a přispívat k zajímavým projek</p>
+</p>`
+      },
+      {
+        header: "Zkušenosti",
+        title: "Kde jsem pracovala",
+        content: `<ul>
+           <div style="border-left:2px solid rgba(0,85,255,0.15); padding-left:18px; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <div><strong style="color:#0055ff">Intern</strong> • Publicis Group</div>
+          <span style="background:rgba(0,85,255,0.05); padding:2px 8px; border-radius:8px; font-size:0.8rem; color:#0055ff">2024</span>
+        </div>
+        <ul style="padding-left:16px;"><li>Spolupráce na kreativních konceptech pro reklamní kampaně</li><li>Tvorba vizuálních návrhů a prezentací pro klienty</li><li>Vytváření více variant designérských řešení</li><li> Práce v Adobe Illustrator a Photoshop</li></ul>
+      </div>
+      <div style="border-left:2px solid rgba(0,85,255,0.15); padding-left:18px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <div><strong style="color:#0055ff">Intern</strong> • Pingpongstudio</div>
+          <span style="background:rgba(0,85,255,0.05); padding:2px 8px; border-radius:8px; font-size:0.8rem; color:#0055ff">2024</span>
+        </div> <ul style="padding-left:16px;"><li>Brand identity</li><li>Návrhy grafických materiálů pro různé projekty</li><li>Návrhy grafických materiálů pro různé projekty</li></ul>
+      </div>
+    </div>
+        </ul>`
+      },
+      {
+        header: "Vzdělání",
+        title: "",
+        content: `<p><div style="border-left:2px solid rgba(0,85,255,0.15); padding-left:18px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <div><strong style="color:#0055ff">Grafický design</strong> • VOŠ Michael</div>
+          <span style="background:rgba(0,85,255,0.05); padding:2px 8px; border-radius:8px; font-size:0.8rem; color:#0055ff">2023–2025</span>
+        </div>
+        <p>Typografie • Ilustrace • Vizuální komunikace</p>
+      </div>
+    </div>
+  </div>
+</p>`
+      },
+      {
+        header: "Jazyky",
+        content: `<p><div style="display:flex; gap:10px; margin-top:12px;">
+        <div style="text-align:center; flex:1; padding:12px; background:rgba(0,85,255,0.03); border-radius:8px;">
+          <div style="font-weight:600; color:#0055ff">Čeština</div>
+          <div>Plynule</div>
+        </div>
+        <div style="text-align:center; flex:1; padding:12px; background:rgba(0,85,255,0.03); border-radius:8px;">
+          <div style="font-weight:600; color:#0055ff">Angličtina</div>
+          <div>Plynule</div>
+        </div></p>`
+      },
+      {
+        header: "Soft skills",
+        title: "Soft skills",
+        content: `<p><ul style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
+        <li> Týmová spolupráce </li> <li> Rychlé učení</li>
+        <li> Zodpovědnost </li> <li>  Flexibilita </li>
+        <li> Kreativní myšlení </li> <li>  Time management </li>
+      </ul>
+    </div></p>`
+      }
+    ];
+
+    // Открытие обычных заметок
     document.querySelectorAll('.dock-item[data-app]').forEach(item => {
-      item.addEventListener('click', (e) => {
-        const appId = e.currentTarget.dataset.app;
+      const appId = item.dataset.app;
+      if (appId === 'about-me') return;
+
+      item.addEventListener('click', () => {
         const data = appData[appId];
         if (!data) return;
 
-        const template = document.getElementById('note-template');
-        const clone = document.importNode(template.content, true).children[0];
-        
-        clone.querySelector('.note-title').textContent = data.header;
-        clone.querySelector('h3').textContent = data.title;
-        clone.querySelector('p').textContent = data.text;
-
-        // Позиция: чуть выше середины экрана
-        const left = window.innerWidth / 2 - 160 + (Math.random() - 0.5) * 60;
-        const top = window.innerHeight / 2 - 120 + (Math.random() - 0.5) * 40;
-        clone.style.left = `${left}px`;
-        clone.style.top = `${top}px`;
-
+        const clone = createNote(data.header, data.title, data.text);
+        positionNoteRandomly(clone, 0);
         document.body.appendChild(clone);
-
-        // Показать с анимацией
-        setTimeout(() => clone.classList.add('visible'), 10);
-
-        // Добавить drag & close
         setupNoteWindow(clone);
       });
     });
 
-    // Настроить окно заметки (drag + close)
+    // Открытие 5 окон "Обо мне"
+    document.querySelector('.dock-item[data-app="about-me"]').addEventListener('click', () => {
+      aboutMeNotes.forEach((note, i) => {
+        const el = createNote(note.header, note.title, note.content);
+        positionNoteRandomly(el, i);
+        document.body.appendChild(el);
+        setupNoteWindow(el);
+      });
+    });
+
+    function createNote(header, title, content) {
+      const clone = document.importNode(document.getElementById('note-template').content, true).children[0];
+      clone.querySelector('.note-title').textContent = header;
+      clone.querySelector('h3').textContent = title;
+      clone.querySelector('p').outerHTML = `<div>${content}</div>`;
+      return clone;
+    }
+
+    function positionNoteRandomly(el, index) {
+      const baseX = window.innerWidth / 2 - 160;
+      const baseY = window.innerHeight / 3;
+      const angle = (index * 72 * Math.PI / 180);
+      const radius = 180;
+      const x = baseX + Math.cos(angle) * radius + (Math.random() - 0.5) * 40;
+      const y = baseY + Math.sin(angle) * radius + (Math.random() - 0.5) * 30;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      setTimeout(() => el.classList.add('visible'), 50 * index);
+    }
+
     function setupNoteWindow(note) {
       const header = note.querySelector('.note-header');
       const closeBtn = note.querySelector('.dot.close');
@@ -1669,35 +1949,27 @@
 
       let isDragging = false, offsetX, offsetY;
 
-      // Перетаскивание
       header.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.dot')) return; // не тащим за кнопки
+        if (e.target.closest('.dot')) return;
         isDragging = true;
         note.style.zIndex = 95;
         const rect = note.getBoundingClientRect();
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
-        note.classList.add('dragging');
         e.preventDefault();
       });
 
       const move = (e) => {
-        if (!isDragging) return;
-        note.style.left = `${e.clientX - offsetX}px`;
-        note.style.top = `${e.clientY - offsetY}px`;
-      };
-
-      const stop = () => {
         if (isDragging) {
-          isDragging = false;
-          note.classList.remove('dragging');
+          note.style.left = `${e.clientX - offsetX}px`;
+          note.style.top = `${e.clientY - offsetY}px`;
         }
       };
 
+      const stop = () => { if (isDragging) isDragging = false; };
       document.addEventListener('mousemove', move);
       document.addEventListener('mouseup', stop);
 
-      // Закрытие по кнопкам
       const closeNote = () => {
         note.classList.remove('visible');
         setTimeout(() => {
@@ -1708,24 +1980,20 @@
       };
 
       closeBtn.addEventListener('click', closeNote);
-      minBtn.addEventListener('click', closeNote); // как ты просила — жёлтая тоже закрывает
+      minBtn.addEventListener('click', closeNote);
     }
 
-    // Смайлики (как раньше)
+    // Смайлики
     document.querySelectorAll('.smiley-spacer').forEach(spacer => {
       spacer.addEventListener('click', (e) => {
-        const emoji = e.currentTarget.dataset.emoji || e.currentTarget.textContent.trim();
+        const emoji = e.currentTarget.dataset.emoji;
         if (!emoji) return;
 
         const el = document.createElement('div');
         el.className = 'draggable-emoji';
         el.textContent = emoji;
-
-        const left = window.innerWidth / 2 - 21;
-        const top = window.innerHeight / 2 - 21;
-        el.style.left = `${left}px`;
-        el.style.top = `${top}px`;
-
+        el.style.left = `${window.innerWidth / 2 - 21}px`;
+        el.style.top = `${window.innerHeight / 2 - 21}px`;
         document.body.appendChild(el);
         makeDraggable(el);
       });
@@ -1733,7 +2001,6 @@
 
     function makeDraggable(el) {
       let isDragging = false, offsetX, offsetY;
-
       el.addEventListener('mousedown', (e) => {
         isDragging = true;
         el.classList.add('dragging');
@@ -1742,23 +2009,218 @@
         offsetY = e.clientY - rect.top;
         e.preventDefault();
       });
-
       const move = (e) => {
-        if (!isDragging) return;
-        el.style.left = `${e.clientX - offsetX}px`;
-        el.style.top = `${e.clientY - offsetY}px`;
-      };
-
-      const stop = () => {
         if (isDragging) {
-          isDragging = false;
-          el.classList.remove('dragging');
+          el.style.left = `${e.clientX - offsetX}px`;
+          el.style.top = `${e.clientY - offsetY}px`;
         }
       };
-
+      const stop = () => { if (isDragging) isDragging = false, el.classList.remove('dragging'); };
       document.addEventListener('mousemove', move);
       document.addEventListener('mouseup', stop);
     }
+  </script>
+   <script>
+    // 🔷 ТВОЁ ИЗОБРАЖЕНИЕ 🔷
+    const MY_IMAGE = 'https://i.imgur.com/LKA7gY6.jpg';
+    
+    const bgCanvas = document.getElementById('bg');
+    const bgCtx = bgCanvas.getContext('2d');
+    const lensCanvas = document.getElementById('lens-canvas');
+    const lensCtx = lensCanvas.getContext('2d');
+    const lens = document.getElementById('lens');
+    const dragHandle = document.getElementById('dragHandle');
+
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+    lensCanvas.width = 320;
+    lensCanvas.height = 292;
+
+    const PIXEL_SIZE = 18;
+    let img = null;
+    let imageLoaded = false;
+
+    // Загрузка изображения
+    function loadImage(url) {
+      const image = new Image();
+      image.crossOrigin = 'anonymous';
+      
+      image.onload = function() {
+        img = image;
+        imageLoaded = true;
+        console.log('✅ Изображение загружено!');
+        redrawBg();
+        updateLens();
+      };
+      
+      image.onerror = function() {
+        console.error('❌ Ошибка загрузки. Создаю демо-изображение...');
+        createDemoImage();
+      };
+      
+      image.src = url;
+    }
+
+    // Создание демо-изображения
+    function createDemoImage() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200;
+      canvas.height = 800;
+      const ctx = canvas.getContext('2d');
+      
+      // Градиент
+      const gradient = ctx.createLinearGradient(0, 0, 1200, 800);
+      gradient.addColorStop(0, '#667eea');
+      gradient.addColorStop(0.5, '#764ba2');
+      gradient.addColorStop(1, '#f093fb');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 1200, 800);
+      
+      // Круги
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      for (let i = 0; i < 40; i++) {
+        ctx.beginPath();
+        ctx.arc(
+          Math.random() * 1200,
+          Math.random() * 800,
+          Math.random() * 60 + 20,
+          0, Math.PI * 2
+        );
+        ctx.fill();
+      }
+      
+      // Текст
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 80px Arial';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = 'rgba(0,0,0,0.3)';
+      ctx.shadowBlur = 10;
+      ctx.fillText('🎨 Pixel Art', 600, 400);
+      ctx.fillText('Demo', 600, 500);
+      
+      img = new Image();
+      img.onload = function() {
+        imageLoaded = true;
+        redrawBg();
+        updateLens();
+      };
+      img.src = canvas.toDataURL();
+    }
+
+    // Пикселизация фона
+    function redrawBg() {
+      if (!img || !imageLoaded) return;
+      
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+      const scale = Math.max(
+        bgCanvas.width / img.width,
+        bgCanvas.height / img.height
+      );
+      
+      const scaledWidth = img.width * scale;
+      const scaledHeight = img.height * scale;
+      const offsetX = (bgCanvas.width - scaledWidth) / 2;
+      const offsetY = (bgCanvas.height - scaledHeight) / 2;
+
+      for (let y = 0; y < bgCanvas.height; y += PIXEL_SIZE) {
+        for (let x = 0; x < bgCanvas.width; x += PIXEL_SIZE) {
+          const srcX = (x - offsetX) / scale;
+          const srcY = (y - offsetY) / scale;
+          
+          if (srcX < 0 || srcY < 0 || srcX >= img.width || srcY >= img.height) {
+            bgCtx.fillStyle = '#f0f6ff';
+            bgCtx.fillRect(x, y, PIXEL_SIZE, PIXEL_SIZE);
+            continue;
+          }
+
+          const temp = document.createElement('canvas');
+          const tctx = temp.getContext('2d');
+          temp.width = 1;
+          temp.height = 1;
+          tctx.drawImage(img, srcX, srcY, 1, 1, 0, 0, 1, 1);
+          const d = tctx.getImageData(0, 0, 1, 1).data;
+
+          bgCtx.fillStyle = `rgb(${d[0]}, ${d[1]}, ${d[2]})`;
+          bgCtx.fillRect(x, y, PIXEL_SIZE, PIXEL_SIZE);
+        }
+      }
+    }
+
+    // Обновление линзы
+    function updateLens() {
+      if (!img || !imageLoaded) return;
+
+      const rect = lens.getBoundingClientRect();
+      const scale = Math.max(
+        bgCanvas.width / img.width,
+        bgCanvas.height / img.height
+      );
+      
+      const scaledWidth = img.width * scale;
+      const scaledHeight = img.height * scale;
+      const offsetX = (bgCanvas.width - scaledWidth) / 2;
+      const offsetY = (bgCanvas.height - scaledHeight) / 2;
+
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const srcCenterX = (centerX - offsetX) / scale;
+      const srcCenterY = (centerY - offsetY) / scale;
+      
+      const srcWidth = rect.width / scale;
+      const srcHeight = (rect.height - 28) / scale;
+
+      lensCtx.clearRect(0, 0, lensCanvas.width, lensCanvas.height);
+      lensCtx.drawImage(
+        img,
+        srcCenterX - srcWidth / 2,
+        srcCenterY - srcHeight / 2,
+        srcWidth,
+        srcHeight,
+        0, 0,
+        lensCanvas.width,
+        lensCanvas.height
+      );
+    }
+
+    // Drag & Drop
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    dragHandle.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      const rect = lens.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      lens.style.left = (e.clientX - offsetX) + 'px';
+      lens.style.top = (e.clientY - offsetY) + 'px';
+      updateLens();
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    window.addEventListener('resize', () => {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+      if (imageLoaded) {
+        redrawBg();
+        updateLens();
+      }
+    });
+
+    document.querySelector('.close').addEventListener('click', () => {
+      lens.style.display = 'none';
+    });
+
+    // ЗАПУСК
+    loadImage(MY_IMAGE);
   </script>
 
 </body>
